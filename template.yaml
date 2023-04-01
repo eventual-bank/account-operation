@@ -1,0 +1,33 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Eventual bank account operation
+  
+Globals:
+  Function:
+    Timeout: 10
+
+Resources:
+  AccountOperationFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: dynamo-handler/
+      Handler: app.handler
+      Runtime: nodejs18.x
+      Policies:
+        - SQSPollerPolicy:
+            QueueName: transfer
+      Events:
+        CreateOrUpdateItem:
+          Type: HttpApi
+          Properties:
+            Path: /process
+            Method: GET
+
+Outputs:
+  ApiEndpoint:
+    Description: "The invoke URL for the HTTP API, using GET"
+    Value: !Sub "https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com/validate"
+  Function:
+    Description: "Transfer simulator function ARN"
+    Value: !GetAtt AccountOperationFunction.Arn
