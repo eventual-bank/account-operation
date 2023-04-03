@@ -14,6 +14,8 @@ Resources:
       Handler: app.handler
       Runtime: nodejs18.x
       Policies:
+      - DynamoDBCrudPolicy:
+          TableName: account
       - SQSPollerPolicy:
           QueueName: transfer
       Events:

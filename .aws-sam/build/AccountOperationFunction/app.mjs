@@ -20,16 +20,16 @@ async function retrieveBalance(account) {
   console.log ("retrieveBalance account: ", account)
 
   try {
-    const data = await dynamo.send(
+    const body = await dynamo.send(
       new GetCommand ({
         TableName: tableName,
         Key: {
-          id: account
+          account_id: account
         }
       })
     );
-
-    console.log ("retrieveBalance data: ", data)
+    
+    console.log ("retrieveBalance body: ", body)
   } catch (e) {
     console.log ("Exception: ", e)
   }
@@ -45,9 +45,22 @@ async function processOperation(body) {
 }
 
 export const handler = async (event) => {
-  event.Records.forEach(async record => {
+  for (const record of event.Records) {
     const { body } = record;
     await processOperation(body)
-  });
-  return {};
+  }
+
+  const headers = {
+    "Content-Type": "application/json",
+  };
+
+  const statusCode = 200;
+
+  const body = JSON.stringify("operations were successful");
+
+  return {
+    statusCode,
+    body,
+    headers
+  }
 };
