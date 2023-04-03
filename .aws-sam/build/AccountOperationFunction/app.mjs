@@ -2,12 +2,10 @@ import { SQSClient, SendMessageCommand } from "@aws-sdk/client-sqs";
 const sqsClient = new SQSClient({ region: "us-east-1" });
 
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+
 import {
   DynamoDBDocumentClient,
-  ScanCommand,
-  PutCommand,
-  GetCommand,
-  DeleteCommand,
+  UpdateCommand
 } from "@aws-sdk/lib-dynamodb";
 
 const client = new DynamoDBClient({});
@@ -16,6 +14,7 @@ const dynamo = DynamoDBDocumentClient.from(client);
 
 const tableName = "account";
 
+/*
 async function retrieveBalance(account) {
   console.log ("retrieveBalance account: ", account)
 
@@ -29,9 +28,41 @@ async function retrieveBalance(account) {
       })
     );
     
-    console.log ("retrieveBalance body: ", body)
+    console.log ("retrieveBalance body: ", body, " type: ", typeof body);
+
+    const item = body.Item;
+    console.log ("retrieveBalance item: ", item, " type: ", typeof item);
+
+    const balance = item.balance;
+    return balance;
   } catch (e) {
     console.log ("Exception: ", e)
+  }
+}
+*/
+
+async function updateBalance(account, amount) {
+  try {
+    const params = {
+      TableName: tableName,
+      Key: {
+        account_id: account
+      },
+      ProjectExpression: "balance",
+      UpdateExpression: "set balance = balance + :a",
+      ExpressionAttributeValues: {
+        ":a": amount
+      }
+      
+    }
+
+    const data = await dynamo.send(
+      new UpdateCommand(params)
+    );
+
+    console.log ("Updated balance for account ", account)
+  } catch (e) {
+    console.log ("Exception: ", e);
   }
 }
 
@@ -41,10 +72,16 @@ async function processOperation(body) {
 
   console.log ("processOperation obj: ", obj)
   const from = obj.from;
-  const from_balance = await retrieveBalance(from)
+  const to = obj.to;
+  const amount = obj.amount;
+
+  await updateBalance(from, -amount);
+  await updateBalance(to, amount);
 }
 
 export const handler = async (event) => {
+  console.log ("event: ", event);
+
   for (const record of event.Records) {
     const { body } = record;
     await processOperation(body)
