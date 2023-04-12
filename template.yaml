@@ -24,6 +24,8 @@ Resources:
           Type: SQS
           Properties:
             Queue: !GetAtt MySqsQueue.Arn
+            BatchSize: 100
+            MaximumBatchingWindowInSeconds: 2
   MySqsQueue:
     Type: AWS::SQS::Queue
     Properties:

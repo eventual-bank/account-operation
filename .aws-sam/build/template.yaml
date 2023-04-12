@@ -29,6 +29,8 @@ Resources:
               Fn::GetAtt:
               - MySqsQueue
               - Arn
+            BatchSize: 100
+            MaximumBatchingWindowInSeconds: 2
     Metadata:
       SamResourceId: AccountOperationFunction
   MySqsQueue:
