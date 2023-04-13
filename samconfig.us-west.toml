@@ -1,0 +1,10 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "account-operation"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-1f34jhn0ga64y"
+s3_prefix = "account-operation"
+region = "us-west-2"
+capabilities = "CAPABILITY_IAM"
+image_repositories = []
