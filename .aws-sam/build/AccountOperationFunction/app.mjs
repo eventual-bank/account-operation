@@ -1,5 +1,5 @@
 import { SQSClient, SendMessageCommand } from "@aws-sdk/client-sqs";
-const sqsClient = new SQSClient({ region: "us-east-1" });
+const sqsClient = new SQSClient();
 
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 
@@ -8,7 +8,7 @@ import {
   UpdateCommand
 } from "@aws-sdk/lib-dynamodb";
 
-const client = new DynamoDBClient({});
+const client = new DynamoDBClient();
 
 const dynamo = DynamoDBDocumentClient.from(client);
 

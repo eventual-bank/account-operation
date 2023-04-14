@@ -30,7 +30,6 @@ Resources:
     Type: AWS::SQS::Queue
     Properties:
       QueueName: account_transfer
-
 Outputs:
   Function:
     Description: "Transfer simulator function ARN"
